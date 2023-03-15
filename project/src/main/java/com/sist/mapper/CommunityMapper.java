@@ -32,32 +32,45 @@ import com.sist.vo.*;
     private int mno;
  */
 public interface CommunityMapper {
-	@Select("SELECT cno,hit,name,title,content,filesize,type,TO_CHAR(createdAt,'YYYY-MM-DD') as dbday,num "
-			+"FROM (SELECT cno,hit,name,title,content,filesize,type,createdAt,rownum as num "
-			+"FROM (SELECT /* +INDEX_DESC(pet_community_2_1 pc1_cno_pk)*/cno,hit,name,title,content,filesize,type,createdAt "
-			+"FROM pet_community_2_1)) "
+	@Select("SELECT cno,hit,name,title,filesize,type,TO_CHAR(createdAt,'YYYY-MM-DD') as dbday,num "
+			+"FROM (SELECT cno,hit,name,title,filesize,type,createdAt,rownum as num "
+			+"FROM (SELECT cno,hit,name,title,filesize,type,createdAt "
+			+"FROM pet_community_2_1 ORDER BY cno DESC)) "
 			+"WHERE num BETWEEN #{start} AND #{end}")
 	public List<CommunityVO> communityListData(Map map);
 	
-	/*
-	 * @Select("SELECT CEIL(COUNT(*)/10.0) FROM pet_community_2_1") public int
-	 * communityTotalPage();
-	 */
 	
-	
-	  @SelectKey(keyProperty = "cno",resultType = int.class,before = true, 
-	  statement = "SELECT NVL(MAX(no)+1,1) as no FROM pet_community_2_1")
+	  @Select("SELECT CEIL(COUNT(*)/10.0) FROM pet_community_2_1") 
+	  public int communityTotalPage();
 	 
+	
+	
+	@SelectKey(keyProperty = "cno",resultType = int.class,before = true, 
+	statement = "SELECT NVL(MAX(cno)+1,1) as cno FROM pet_community_2_1")
+	 
+	/*
+	 * CNO        NOT NULL NUMBER         
+MNO                 NUMBER         
+TITLE      NOT NULL VARCHAR2(300)  
+CONTENT    NOT NULL VARCHAR2(4000) 
+CREATED_AT          DATE           
+TYPE       NOT NULL VARCHAR2(300)  
+HIT                 NUMBER         
+NAME       NOT NULL VARCHAR2(20)   
+PWD        NOT NULL VARCHAR2(20)   
+FILESIZE            VARCHAR2(4000) 
+FILENAME            VARCHAR2(4000)
+	 */
 	@Insert("INSERT INTO pet_community_2_1 VALUES(" 
-			+ "#{cno},#{title},#{content},#{type},#{filesize},#{filename},SYSDATE,0)")
+			+ "#{cno},4,#{title},#{content},SYSDATE,#{type},0,#{name},#{pwd},#{filesize},#{filename})")
 	public void communityInsert(CommunityVO vo);
 	  
 	@Update("UPDATE pet_community_2_1 SET "
 			+"hit=hit+1 "
-			+"WHERE no=#{no}")
+			+"WHERE cno=#{cno}")
 	public void communityHitIncrement(int cno);
 	
-	@Select("SELECT cno,name,title,content,filesize,TO_CHAR(createdAt,'YYYY-MM-DD') as dbday,hit "
+	@Select("SELECT cno,name,title,content,filesize,filename,TO_CHAR(createdAt,'YYYY-MM-DD') as dbday,hit "
 			+"FROM pet_community_2_1 "
 			+"WHERE cno=#{cno}")
 	public CommunityVO communityDetailData(int cno);
@@ -75,5 +88,7 @@ public interface CommunityMapper {
 			+"WHERE cno=#{cno}")
 	public void communityDelete(int cno);
 	
+	@Select("SELECT filename,filesize FROM pet_community_2_1 WHERE cno=#{cno}")
+	   public CommunityVO communityFileInfoData(int cno);
 	
 }

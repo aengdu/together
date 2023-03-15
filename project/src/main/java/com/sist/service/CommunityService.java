@@ -24,9 +24,12 @@ public class CommunityService {
 		mapper.communityInsert(vo);
 	}
 	
-	/*
-	 * public int communityTotalPage() { return mapper.communityTotalPage(); }
-	 */
+	
+	 public int communityTotalPage() 
+	 { 
+		 return mapper.communityTotalPage();
+	 }
+	 
 	
 	/*
 	 * @Update("UPDATE pet_community_2_1 SET " 
@@ -59,7 +62,7 @@ public class CommunityService {
 	 */
 	public String communityUpdate(CommunityVO vo)
 	{
-		String res="no";
+		String res="cno";
 		String db_pwd=mapper.communityGetPassword(vo.getCno());
 		if(db_pwd.equals(vo.getPwd()))
 		{
@@ -75,7 +78,7 @@ public class CommunityService {
 	 */
 	public String communityDelete(int cno,String pwd)
 	{
-		String res="no";
+		String res="cno";
 		String db_pwd=mapper.communityGetPassword(cno);
 		if(db_pwd.equals(pwd))
 		{
@@ -84,5 +87,11 @@ public class CommunityService {
 		}
 		return res;
 	}
+	 
+	//@Select("SELECT filename,filesize,filecount FROM spring_databoard WHERE no=#{no}")
+	   public CommunityVO communityFileInfoData(int cno)
+	   {
+		   return mapper.communityFileInfoData(cno);
+	   }
 	 
 }
