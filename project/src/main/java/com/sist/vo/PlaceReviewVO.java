@@ -7,18 +7,18 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class ReviewVO {
+public class PlaceReviewVO {
+
+    private int prno;
 
     private int pno;
-    
-    private int prno;
+
+    private String writer;
 
     private String content;
 
-    private Date createdAt;
+    private Date regDate;
 
     private int mno;
-    
-    private String writer;
 
 }

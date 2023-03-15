@@ -26,12 +26,15 @@
                                                 <li>
                                                     <a href="/">여행노트</a>
                                                 </li>
+                                                <li>
+                                                  <a href="../notice/list.do">공지사항</a>
+                                                </li>
                                             </ul>
                                         </li>
                                         <li><a href="../community/list.do">커뮤니티 <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li>
-                                                    <a href="/">베스트팁</a>
+                                                    <a href="/besttip/list">베스트팁</a>
                                                 </li>
                                                 <li>
                                                     <a href="/">리뷰모음</a>
