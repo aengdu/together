@@ -54,7 +54,8 @@
         .next {
             right: 0;
         }
-        .tabs{
+
+        .tabs {
             opacity: 1;
             color: #477a7b;
             border-color: #477a7b;
@@ -153,13 +154,14 @@
                     <b-tab title="기본정보" active>
                         <tr>
                             <td style="display: flex; flex-direction: column;">
-                                <img v-for="content in place_detail.content.split(',')" :src="content" style="width: 100%; padding-bottom: 15px;">
+                                <img v-for="content in place_detail.content.split(',')" :src="content"
+                                     style="width: 100%; padding-bottom: 15px;">
                             </td>
                         </tr>
                     </b-tab>
                     <b-tab title="위치정보">
                         <div class="one_third">
-                            <div id="map" style="width:100%;height:350px;"></div>
+                            <div id="map" style="width:50%;height:350px;"></div>
                         </div>
                     </b-tab>
                     <b-tab title="리뷰">
@@ -188,25 +190,22 @@
                 console.log(response.data)
                 _this.place_detail = response.data
 
-                if(window.kakao && window.kakao.maps)
-                {
+                if (window.kakao && window.kakao.maps) {
                     _this.initMap();
-                }
-                else
-                {
+                } else {
                     _this.addScript();
                 }
             })
         },
-        methods:{
-            addScript:function(){
-                const script=document.createElement("script")
+        methods: {
+            addScript: function () {
+                const script = document.createElement("script")
                 // /!* global kakao *!/
                 script.onload = () => kakao.maps.load(this.initMap)
-                script.src='http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=b18319530b6d6d62d5c86a8807893413&libraries=services'
+                script.src = 'http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=ce7e1ba0d693dbff7b0aa170789fd3c0&libraries=services'
                 document.head.appendChild(script)
             },
-            initMap:function(){
+            initMap: function () {
                 //let name=this.food_detail.name;
                 var mapContainer = document.getElementById('map'), // 지도를 표시할 div
                     mapOption = {
@@ -221,7 +220,7 @@
                 var geocoder = new kakao.maps.services.Geocoder();
 
                 // 주소로 좌표를 검색합니다
-                geocoder.addressSearch(this.place_detail.address, function(result, status) {
+                geocoder.addressSearch(this.place_detail.address, function (result, status) {
 
                     // 정상적으로 검색이 완료됐으면
                     if (status === kakao.maps.services.Status.OK) {
@@ -237,7 +236,7 @@
                         // 인포윈도우로 장소에 대한 설명을 표시합니다
 
                         var infowindow = new kakao.maps.InfoWindow({
-                            content: '<div style="width:150px;text-align:center;padding:6px 0;">'+$('#name').text()+'</div>'
+                            content: '<div style="width:150px;text-align:center;padding:6px 0;">' + $('#name').text() + '</div>'
                         });
                         infowindow.open(map, marker);
 
