@@ -105,7 +105,7 @@
 </script>
 <body>
 <jsp:include page="../fragments/header.jsp"/>
-<div class="wrapper row3 rows">
+<div class="wrapper row3 rows" id="app">
     <main class="container clear">
         <div style="height: 20px"></div>
         <div class="two_third first">
@@ -165,7 +165,68 @@
                         </div>
                     </b-tab>
                     <b-tab title="리뷰">
-
+                        <div id="review">
+                            <div class="m-auto" style="max-width: 800px;">
+                                <div class="form-group">
+                                    <textarea class="form-control" v-model="reply_content" id="exampleFormControlTextarea1"
+                                              rows="4"
+                                              placeholder="댓글을 입력해주세요."></textarea>
+                                    <div class="mt-3 d-flex justify-content-end">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                v-on:click="placeReplyWrite()">등록
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-3" v-for="vo in place_reply_list">
+                                    <div class="d-flex justify-content-start align-items-center mt-3">
+                                        <div class="mr-3">
+                                            {{ vo.writer }}
+                                        </div>
+                                        <div class="text-secondary">
+                                            <small>{{ vo.regDate }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <p>{{ vo.content }}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-5 mb-3">
+                                    <div class="d-flex justify-content-center">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
+                                                <div>
+                                                    <li class="page-item disabled" v-if="isFirst">
+                                                        <button class="page-link" type="button" v-on:click="prevPage()">
+                                                            &laquo;
+                                                        </button>
+                                                    </li>
+                                                    <li class="page-item" v-else>
+                                                        <button class="page-link" type="button" v-on:click="prevPage()">
+                                                            &laquo;
+                                                        </button>
+                                                    </li>
+                                                </div>
+                                                <div class="p-2 d-flex justify-content-center">
+                                                    {{ page }} / {{ totalPage }}
+                                                </div>
+                                                <div>
+                                                    <li class="page-item disabled" v-if="isLast">
+                                                        <button class="page-link" type="button" v-on:click="nextPage()">
+                                                            &raquo;
+                                                        </button>
+                                                    </li>
+                                                    <li class="page-item" v-else>
+                                                        <button class="page-link" type="button" v-on:click="nextPage()">
+                                                            &raquo;
+                                                        </button>
+                                                    </li>
+                                                </div>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -174,11 +235,18 @@
 </div>
 <script>
     new Vue({
-        el: '.rows',
+        el: '#app',
         data: {
             pno:${pno},
             place_detail: [],
-            count: 0
+            place_reply_list: [],
+            count: 0,
+            content: '',
+            reply_content: '',
+            totalCount: '',
+            totalPage: '',
+            isFirst: '',
+            isLast: '',
         },
         mounted: function () {
             let _this = this
@@ -196,6 +264,8 @@
                     _this.addScript();
                 }
             })
+            this.pno = new URLSearchParams(location.search).get('pno');
+            this.placeReplyList(1, this.pno);
         },
         methods: {
             addScript: function () {
@@ -243,10 +313,42 @@
                         // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                         map.setCenter(coords);
                     }
-                });
+                })
+            },
+            placeReplyList: function (page, pno) {
+                let _this = this;
+                axios.get('/review/review_list_vue', {
+                    params: {
+                        page: page,
+                        pno: pno
+                    }
+                }).then(function (response) {
+                    _this.place_reply_list = response.data.items;
+                    _this.totalCount = response.data.totalItem;
+                    _this.page = response.data.page;
+                    _this.isFirst = response.data.first;
+                    _this.isLast = response.data.last;
+                    _this.totalPage = response.data.totalPage;
+                })
+            },
+            placeReplyWrite: function () {
+                let _this = this;
+                this.pno = new URLSearchParams(location.search).get('pno');
+                let data = {
+                    content: this.reply_content,
+                    pno: this.pno
+                }
+                axios.post('/review/review_insert_vue', JSON.stringify(data), {
+                    headers: {
+                        "content-type": 'application/json'
+                    }
+                }).then(function (response) {
+                    _this.reply_content = '';
+                    _this.placeReplyList(1, _this.pno);
+                })
             }
         }
-    })
+    });
 </script>
 <jsp:include page="../fragments/footer.jsp"/>
 </body>
